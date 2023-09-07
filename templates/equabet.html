@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Example</title>
+  <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head >
+<body style="text-align: center;">
+  <h2>Equabet</h2>
+  <div>
+    <input id="event" type="text" placeholder="Enter event id">
+    <input type="button" value="submit" onclick="makeAPICall()">
+  </div>
+  <div>
+    <p id="err"></p>
+  </div>
+  <div style="text-align: center; margin-top: 30px;">
+
+
+      <table>
+        <thead>
+          <tr>
+            <th>1</th>
+            <th>Draw</th>
+            <th>2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="odd_1">15</td>
+            <td id="odd_x">5</td>
+            <td id="odd_2">24</td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+
+  <script>
+
+
+    // Make the API call
+    function makeAPICall() {
+      let interval = setInterval(makeAPICall, 60000);
+      let event_id = document.getElementById("event").value;
+      let odd_1 = document.getElementById("odd_1");
+      let odd_x = document.getElementById("odd_x");
+      let odd_2 = document.getElementById("odd_2");
+      let err = document.getElementById("err");
+      console.log(event_id)
+      let url = `https://extratime.cloud/api/v1/equabet/match-odds/?event_id=${event_id}`;
+
+      fetch(url)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          console.log(data)
+          if (data["error"]) {
+            err.innerHTML = data["error"]
+            clearInterval(interval);
+          } else {
+          err.innerHTML = "";
+          odd_1.innerHTML = data.odd_data['1X2']['1'];
+          odd_x.innerHTML = data.odd_data['1X2']['X'];
+          odd_2.innerHTML = data.odd_data['1X2']['2'];
+          interval;
+          }
+        })
+        .catch(function(error) {
+          console.log(error)
+        });
+    }
+
+  </script>
+
+</body>
+</html>
+
+<script>
+  let totalUnits;
+  let fixedTax = 50;
+  let select = document.getElementById("select");
+  let error = document.getElementById("error");
+  let amount = document.getElementById("amount");
+  let heading = document.getElementById("heading");
+  let table = document.getElementById("table");
+  let units = document.getElementById("units");
+  let charge = document.getElementById("charge");
+  let energyCharges = document.getElementById("energyCharges");
+  let fpppaCharges = document.getElementById("fpppaCharges");
+  let regulatoryCharge = document.getElementById("regulatoryCharge");
+  let fixedCharges = document.getElementById("fixedCharges");
+  let govtDuty = document.getElementById("govtDuty");
+  let rent = document.getElementById("rent");
+  let total = document.getElementById("total");
+
+  select.onchange = function() {
+    input.value = "";
+    error.innerHTML = "";
+    amount.innerHTML = "";
+    heading.style.display = 'none';
+    table.style.display = 'none';
+  };
+
+  input.oninput = function() {
+    if (Number(input.value) <= 0) {
+      heading.style.display = 'none';
+      table.style.display = 'none';
+      amount.innerHTML = "";
+      error.innerHTML = "Please enter valid input";
+    } else if (input.value == "") {
+      heading.style.display = 'none';
+      table.style.display = 'none';
+      amount.innerHTML = "";
+      error.innerHTML = "";
+    } else {
+      heading.style.display = 'block';
+      error.innerHTML = "";
+      table.style.display = 'block';
+      heading.innerHTML = 'Your Bill amount is ';
+      units.innerHTML = Number(input.value);
+      totalUnits = Number(input.value);
+      fixedCharges.innerHTML = fixedTax;
+      rent.innerHTML = 20;
+      if (select.selectedOptions[0].value == 'Urban') {
+        charge.innerHTML = '4';
+        energyCharges.innerHTML = totalUnits * 4;
+        fpppaCharges.innerHTML = (totalUnits / 100) * 127;
+        regulatoryCharge.innerHTML = (totalUnits / 100) * 18;
+        govtDuty.innerHTML = (Number(energyCharges.innerHTML) + Number(fpppaCharges.innerHTML) +
+        Number(regulatoryCharge.innerHTML) + fixedTax) * 0.15;
+        total.innerHTML = parseInt(Number(energyCharges.innerHTML) + Number(fpppaCharges.innerHTML) +
+        Number(regulatoryCharge.innerHTML) + fixedTax + Number(govtDuty.innerHTML) + Number(rent.innerHTML));
+        amount.innerHTML = total.innerHTML;
+      } else {
+        charge.innerHTML = '3';
+        energyCharges.innerHTML = totalUnits * 3;
+        fpppaCharges.innerHTML = (totalUnits / 100) * 127;
+        regulatoryCharge.innerHTML = (totalUnits / 100) * 18;
+        govtDuty.innerHTML = (Number(energyCharges.innerHTML) + Number(fpppaCharges.innerHTML) +
+        Number(regulatoryCharge.innerHTML) + fixedTax) * 0.15;
+        total.innerHTML = parseInt(Number(energyCharges.innerHTML) + Number(fpppaCharges.innerHTML) +
+        Number(regulatoryCharge.innerHTML) + fixedTax + Number(govtDuty.innerHTML) + Number(rent.innerHTML));
+        amount.innerHTML = total.innerHTML;
+      }
+    }
+  };
+</script>

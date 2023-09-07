@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bill</title>
+      <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body style="text-align: center;margin-top: 100px;">
+<select id="select">
+    <option>Urban</option>
+    <option>Rural</option>
+</select>
+<input id="input" type="number" placeholder="Enter units">
+<p id="error"></p>
+<h3 id="heading"></h3>
+<p id="amount"></p>
+
+<div id="table" style="text-align: center; margin-top: 30px;display: none;">
+    <table>
+        <thead>
+        <tr>
+            <th>Units</th>
+            <th>Charge per unit</th>
+            <th>Energy Charges</th>
+            <th>FPPPA Charges</th>
+            <th>Regulatory Charge</th>
+            <th>Fixed Charges</th>
+            <th>Govt. Duty</th>
+            <th>Meter Rent</th>
+            <th>Total amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td id="units"></td>
+            <td id="charge"></td>
+            <td id="energyCharges"></td>
+            <td id="fpppaCharges"></td>
+            <td id="regulatoryCharge"></td>
+            <td id="fixedCharges"></td>
+            <td id="govtDuty"></td>
+            <td id="rent"></td>
+            <td id="total"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let totalUnits;
+    let fixedTax = 50;
+    let select = document.getElementById("select");
+    let input = document.getElementById("input");
+    let error = document.getElementById("error");
+    let amount = document.getElementById("amount");
+    let heading = document.getElementById("heading");
+    let table = document.getElementById("table");
+    let units = document.getElementById("units");
+    let charge = document.getElementById("charge");
+    let energyCharges = document.getElementById("energyCharges");
+    let fpppaCharges = document.getElementById("fpppaCharges");
+    let regulatoryCharge = document.getElementById("regulatoryCharge");
+    let fixedCharges = document.getElementById("fixedCharges");
+    let govtDuty = document.getElementById("govtDuty");
+    let rent = document.getElementById("rent");
+    let total = document.getElementById("total");
+
+    select.addEventListener('change', function () {
+        input.value = "";
+        error.innerHTML = "";
+        amount.innerHTML = "";
+        heading.style.display = 'none';
+        table.style.display = 'none';
+    });
+
+    input.addEventListener('input', function () {
+        if (Number(input.value) <= 0) {
+            heading.style.display = 'none';
+            table.style.display = 'none';
+            amount.innerHTML = "";
+            error.innerHTML = "Please enter valid input";
+        } else if (input.value === "") {
+            heading.style.display = 'none';
+            table.style.display = 'none';
+            amount.innerHTML = "";
+            error.innerHTML = "";
+        } else {
+            heading.style.display = 'block';
+            error.innerHTML = "";
+            table.style.display = 'block';
+            heading.innerHTML = 'Your Bill amount is ';
+            units.innerHTML = Number(input.value);
+            totalUnits = Number(input.value);
+            fixedCharges.innerHTML = fixedTax;
+            rent.innerHTML = 20;
+
+            let chargePerUnit = select.selectedOptions[0].value === 'Urban' ? 4 : 3;
+            let energyChargesTotal = totalUnits * chargePerUnit;
+            let fpppaChargesTotal = (totalUnits / 100) * 127;
+            let regulatoryChargeTotal = (totalUnits / 100) * 18;
+            let govtDutyTotal = (energyChargesTotal + fpppaChargesTotal + regulatoryChargeTotal + fixedTax) * 0.15;
+
+            charge.innerHTML = chargePerUnit;
+            energyCharges.innerHTML = energyChargesTotal.toFixed(2);
+            fpppaCharges.innerHTML = fpppaChargesTotal.toFixed(2);
+            regulatoryCharge.innerHTML = regulatoryChargeTotal.toFixed(2);
+            govtDuty.innerHTML = govtDutyTotal.toFixed(2);
+
+            let totalAmount = energyChargesTotal + fpppaChargesTotal + regulatoryChargeTotal + fixedTax + govtDutyTotal + parseFloat(rent.innerHTML);
+            total.innerHTML = totalAmount.toFixed(2);
+            amount.innerHTML = totalAmount.toFixed(2);
+        }
+    });
+});
+</script>
+
+</body>
+</html>
